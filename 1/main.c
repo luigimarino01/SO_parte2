@@ -11,6 +11,7 @@ void* routine() {
 
 int main(int argc, char* argv[]) {
     pthread_t p1, p2;
+    
     if (pthread_create(&p1, NULL, &routine, NULL) != 0) {
         return 1;
     }
@@ -23,5 +24,7 @@ int main(int argc, char* argv[]) {
     if (pthread_join(p2, NULL) != 0) {
         return 4;
     }
+    
+    
     return 0;
 }
