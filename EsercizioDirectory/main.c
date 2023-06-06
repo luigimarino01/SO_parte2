@@ -8,23 +8,35 @@ che,  tra  le tre esaminate, contiene il  minor numero di entrate.*/
 #include <unistd.h>
 #include <dirent.h>
 #include <string.h>
+#include <apue.h>
+#include <limits.h>
 
 #define NUMERO_THREADS 5
 
 int min = INT_MIN;
 
 void* contaEntrate(void* args){
+    int count = 0;
     char* stringa = (char*)args;
     DIR *dp;
     if  ((dp = opendir(stringa)) == -1)
         perror("Errore durante l'apertura della directory.");
 
     struct dirent *element;
-    struct stat elementInfo;
+
+    while(element = readdir(dp)){
+        count++;
+    }
 
 
+    printf("Lettura directory :%s - Numero elementi: %d\n", stringa,count);
+
+
+    *(int*)args = count;
+    return args;
 
 }
+    
 
 int main(int argc, char* argv[]){
 
@@ -66,7 +78,10 @@ int main(int argc, char* argv[]){
         }
         
         free(r);
+    
     }
+
+    printf("Il file con le minori entrate ha %d entrate.", min);
     
     
     
