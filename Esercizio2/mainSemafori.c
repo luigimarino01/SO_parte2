@@ -64,9 +64,7 @@ void* trovaElemento(void* args){
             return NULL;
 
         
-        }
-
-    else
+        } else
         {
             printf("sono l'ultimo - segnalo.\n");
             pthread_cond_broadcast(&cond);
