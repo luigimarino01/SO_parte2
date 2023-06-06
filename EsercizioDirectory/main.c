@@ -14,26 +14,32 @@ che,  tra  le tre esaminate, contiene il  minor numero di entrate.*/
 #define NUMERO_THREADS 5
 
 int min = INT_MIN;
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void* contaEntrate(void* args){
     int count = 0;
     char* stringa = (char*)args;
     DIR *dp;
-    if  ((dp = opendir(stringa)) == -1)
+    if  ((dp = opendir(stringa)) == NULL)
         perror("Errore durante l'apertura della directory.");
+        pthread_exit(NULL);
 
     struct dirent *element;
 
-    while(element = readdir(dp)){
+    while((element = readdir(dp))!=NULL){
         count++;
     }
 
 
     printf("Lettura directory :%s - Numero elementi: %d\n", stringa,count);
+    closedir(dp);
+    pthread_mutex_lock(&mutex);
+    if (count<min){
+        min = count;
+    }
+    pthread_mutex_unlock(&mutex);
 
-
-    *(int*)args = count;
-    return args;
+    return NULL;
 
 }
     
@@ -44,6 +50,7 @@ int main(int argc, char* argv[]){
     if (argc!=6)
     {
         perror("Errore di parametri");
+        exit(EXIT_FAILURE);
     }
 
     pthread_t threads[NUMERO_THREADS];
@@ -56,34 +63,28 @@ int main(int argc, char* argv[]){
 
     for (size_t i = 0; i < NUMERO_THREADS; i++)
     {
-        char* a = malloc(sizeof(char));
-        a = nomeDirectory[i];
-        if (pthread_create(&threads[i],NULL,&contaEntrate,a)!=0)
+        if (pthread_create(&threads[i],NULL,&contaEntrate,(void*)nomeDirectory[i])!=0)
         {
             perror("Errore durante la creazione dei thread.");
+            exit(EXIT_FAILURE);
         }
         
     }
 
     for (size_t i = 0; i < NUMERO_THREADS; i++)
     {
-        int *r;
-        if (pthread_join(threads[i],(void**)&r)!=0)
+        
+        if (pthread_join(threads[i],NULL)!=0)
         {
             perror("Errore durante il join dei thread.");
+            exit(EXIT_FAILURE);
         }
-        if (*r<min)
-        {
-            min = *r;
-        }
-        
-        free(r);
     
     }
 
     printf("Il file con le minori entrate ha %d entrate.", min);
     
-    
+    pthread_mutex_destroy(&mutex);
     
    
     
