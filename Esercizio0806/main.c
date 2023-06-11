@@ -106,9 +106,9 @@ int main(int argv, char* argc[]){
         for (size_t j = 0; j < shared.n; j++)
         {
             shared.matrice[i][j] = (rand()%256);
-            printf("%d\t", shared.matrice[i][j]);
+          //  printf("%d\t", shared.matrice[i][j]);
         }
-        printf("\n");
+        //printf("\n");
         
     }
 
@@ -141,6 +141,7 @@ int main(int argv, char* argc[]){
     free(shared.matrice);
     free(tid);
     free(t_id);
+
     
     
 
