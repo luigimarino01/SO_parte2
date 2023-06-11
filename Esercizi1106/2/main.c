@@ -73,7 +73,7 @@ int main(int argc, char* argv[]){
 void* calcola(void* args){
     for (size_t i = 0; i < shared.n; i++)
     {
-        long long casuale = rand()%10;
+        long long casuale = rand()%11;
         sem_wait(&semCalcola);
         printf("Numero casuale generato di cui calcolare il fattoriale: %ld\n",casuale);
         shared.condivisa = fattoriale(casuale);
